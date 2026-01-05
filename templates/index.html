@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi OCR - Ekstrak Teks dari Gambar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-camera"></i> Aplikasi OCR Flask</h1>
+            <p class="subtitle">Ekstrak teks dari gambar dengan mudah menggunakan Optical Character Recognition</p>
+            
+            <!-- Status Tesseract -->
+            <div class="tesseract-status {% if tesseract_status %}status-success{% else %}status-error{% endif %}">
+                <i class="fas fa-{% if tesseract_status %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                {{ tesseract_message }}
+            </div>
+            
+            {% if not tesseract_status %}
+            <div class="installation-guide">
+                <h3><i class="fas fa-tools"></i> Perbaikan untuk Windows:</h3>
+                <ol>
+                    <li>Pastikan Tesseract terinstall di <code>C:\Program Files\Tesseract-OCR</code></li>
+                    <li>Buka file <code>app.py</code> dan pastikan baris ini tidak dikomentari:
+                        <pre>pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'</pre>
+                    </li>
+                    <li>Jika tidak ada di lokasi tersebut, cari file <code>tesseract.exe</code> dan sesuaikan path-nya</li>
+                    <li>Restart aplikasi Flask setelah mengubah konfigurasi</li>
+                </ol>
+            </div>
+            {% endif %}
+        </header>
+
+        <main class="main-content">
+            <div class="card upload-section">
+                <h2><i class="fas fa-upload"></i> Unggah Gambar</h2>
+                <p class="instruction">Pilih gambar berisi teks (format: JPG, PNG, maksimal 5MB)</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Seret dan lepas gambar di sini atau <span class="browse-link">klik untuk memilih</span></p>
+                    <input type="file" id="imageInput" accept=".jpg,.jpeg,.png" hidden>
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h3>Preview Gambar</h3>
+                    <div class="image-preview" id="imagePreview">
+                        <p class="placeholder">Gambar akan ditampilkan di sini</p>
+                    </div>
+                </div>
+                
+                <button class="btn process-btn" id="processBtn" {% if not tesseract_status %}disabled{% endif %}>
+                    <i class="fas fa-cogs"></i> Proses OCR
+                </button>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Memproses gambar...</p>
+                </div>
+            </div>
+
+            <div class="card result-section">
+                <h2><i class="fas fa-file-alt"></i> Hasil Ekstraksi Teks</h2>
+                <div class="result-container">
+                    <div class="result-header">
+                        <span>Teks yang diekstrak:</span>
+                        <button class="btn copy-btn" id="copyBtn" disabled>
+                            <i class="far fa-copy"></i> Salin Teks
+                        </button>
+                    </div>
+                    <textarea id="resultText" placeholder="Hasil teks akan muncul di sini..." readonly></textarea>
+                    <div class="char-count">
+                        <span id="charCount">0</span> karakter
+                    </div>
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorText"></span>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Dibuat dengan menggunakan Flask & Tesseract OCR</p>
+            <p class="footer-note">© 2023 Aplikasi OCR - Untuk Tugas Kuliah & Demo UAS</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
